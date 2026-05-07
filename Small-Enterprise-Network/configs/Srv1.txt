@@ -1,0 +1,191 @@
+Current configuration : 4355 bytes
+!
+! Last configuration change at 06:46:19 CDT Thu May 7 2026
+! NVRAM config last updated at 17:16:43 CDT Wed May 6 2026
+!
+version 15.9
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname Srv1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 9 $9$ZtrCiO/JwuBxVv$RgTvYGkmBRgvnKRZIDuXuftBLXGOf17yx8xeerJCuzo
+!
+no aaa new-model
+!
+!
+!
+clock timezone CDT -5 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+no ip icmp rate-limit unreachable
+!
+!
+!
+ip dhcp excluded-address 10.10.10.126
+ip dhcp excluded-address 10.10.10.190
+ip dhcp excluded-address 10.10.10.198
+!
+ip dhcp pool Mark
+ network 10.10.10.0 255.255.255.128
+ domain-name marketing.fake.com
+ default-router 10.10.10.126
+!
+ip dhcp pool Eng
+ network 10.10.10.128 255.255.255.192
+ domain-name engineering.fake.com
+ default-router 10.10.10.190
+!
+ip dhcp pool HR
+ network 10.10.10.192 255.255.255.248
+ domain-name hr.fake.com
+ default-router 10.10.10.198
+!
+!
+!
+no ip domain lookup
+ip domain name server.fake.com
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+username admin secret 9 $9$vdpQdIMTe92D.v$vGt9Y3Tllq77HjvNx4.8fGtIG1I3GbAbALqAr/ZrWdk
+!
+redundancy
+!
+no cdp log mismatch duplex
+!
+ip tcp synwait-time 5
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 1.1.1.1 255.255.255.255
+ ip ospf 1 area 0
+!
+interface GigabitEthernet0/0
+ description *to R1*
+ ip address 10.10.10.206 255.255.255.252
+ ip ospf 1 area 0
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/1
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/2
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/3
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+ media-type rj45
+!
+router ospf 1
+ passive-interface Loopback0
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 GigabitEthernet0/0 10.10.10.205
+ip ssh version 2
+!
+ipv6 ioam timestamp
+!
+!
+access-list 1 permit 10.10.10.205
+!
+control-plane
+!
+banner exec ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+banner incoming ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+banner login ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+!
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+line vty 0 4
+ access-class 1 in
+ exec-timeout 5 0
+ login local
+ transport input ssh
+line vty 5 924
+ access-class 1 in
+ exec-timeout 5 0
+ login local
+ transport input ssh
+!
+no scheduler allocate
+ntp source Loopback0
+ntp master 1
+ntp update-calendar
+!
+end

@@ -1,0 +1,9 @@
+*.qcow2
+*.vmdk
+*.ova
+*.iso
+*.bin
+*.image
+captures/
+logs/
+*.pcap

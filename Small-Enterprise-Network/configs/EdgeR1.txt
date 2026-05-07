@@ -1,0 +1,174 @@
+Current configuration : 4198 bytes
+!
+! Last configuration change at 06:45:55 CDT Thu May 7 2026
+! NVRAM config last updated at 17:18:43 CDT Wed May 6 2026
+!
+version 15.9
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname EdgeR1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 9 $9$C.7XOavlZR89PP$gU9vcns8VPfaDHLHQVoonXWQPqs/ELCKWJ5MUbOG.JI
+!
+no aaa new-model
+!
+!
+!
+clock timezone CDT -5 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+no ip icmp rate-limit unreachable
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip domain name edge.fake.com
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+username admin secret 9 $9$uWGWKpdlBHKBc9$jieubo4siozC/1X7OEAVGsLUCwWJsKsJbfkgfZwwNPc
+!
+redundancy
+!
+no cdp log mismatch duplex
+!
+ip tcp synwait-time 5
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0
+ description *to R1*
+ ip address 10.10.10.202 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly in
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/1
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/2
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/3
+ description *to ISPRouter*
+ ip address 50.50.50.2 255.255.255.248
+ ip nat outside
+ ip virtual-reassembly in
+ duplex auto
+ speed auto
+ media-type rj45
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip nat pool ISPpool 100.0.0.0 100.0.0.255 prefix-length 24
+ip nat inside source list 1 pool ISPpool overload
+ip route 0.0.0.0 0.0.0.0 GigabitEthernet0/3 50.50.50.1
+ip route 1.1.1.1 255.255.255.255 GigabitEthernet0/0
+ip route 10.10.10.0 255.255.255.0 GigabitEthernet0/0 10.10.10.201
+ip route 10.10.100.0 255.255.255.0 GigabitEthernet0/0 10.10.10.201
+ip ssh version 2
+!
+ipv6 ioam timestamp
+!
+!
+access-list 1 permit 10.10.10.0 0.0.0.255
+access-list 2 permit 10.10.10.201
+!
+control-plane
+!
+banner exec ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+banner incoming ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+banner login ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+!
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+line vty 0 4
+ access-class 2 in
+ exec-timeout 5 0
+ login local
+ transport input ssh
+line vty 5 924
+ access-class 2 in
+ exec-timeout 5 0
+ login local
+ transport input ssh
+!
+no scheduler allocate
+ntp server 1.1.1.1
+ntp peer 10.10.10.201
+!
+end
